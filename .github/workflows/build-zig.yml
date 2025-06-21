@@ -23,8 +23,16 @@ jobs:
       - name: Build Zig (x86_64 host)
         run: |
           cd zig
-          python3 ./build --prefix "$HOME/zig-out" install
-
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=$HOME/zig-out \
+            -DZIG_TARGET_MCPU=cortex_a53 \
+            -DZIG_STATIC_LLVM=ON \
+            -DCMAKE_C_FLAGS="-march=armv8-a" \
+            -DCMAKE_CXX_FLAGS="-march=armv8-a"
+           cmake --build . --target install -- -j$(nproc)
       - name: Package for ARM64 (safe flags)
         run: |
           mkdir -p zig-aarch64-safe/bin
