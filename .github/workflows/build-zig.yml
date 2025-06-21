@@ -1,0 +1,41 @@
+name: Build Zig ARM64 (Safe CPU)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-zig:
+    name: Build Zig 0.14.1 for aarch64
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install cmake ninja-build clang gcc g++ git python3
+
+      - name: Clone Zig
+        run: |
+          git clone https://github.com/ziglang/zig.git
+          cd zig
+          git checkout release-0.14.1
+
+      - name: Build Zig for aarch64 (safe CPU)
+        run: |
+          cd zig
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=$HOME/zig-arm64 \
+            -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+            -DCMAKE_C_FLAGS="-march=armv8-a" \
+            -DCMAKE_CXX_FLAGS="-march=armv8-a" \
+            -DCMAKE_EXE_LINKER_FLAGS="-static"
+          cmake --build . --target install -- -j$(nproc)
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: zig-aarch64-safe
+          path: ~/zig-arm64/
