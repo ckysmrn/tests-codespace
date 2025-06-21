@@ -18,7 +18,7 @@ jobs:
         run: |
           git clone https://github.com/ziglang/zig.git
           cd zig
-          git checkout release-0.14.1
+          git checkout 0.14.1
 
       - name: Build Zig for aarch64 (safe CPU)
         run: |
