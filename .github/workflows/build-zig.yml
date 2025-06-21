@@ -23,7 +23,7 @@ jobs:
       - name: Build Zig (x86_64 host)
         run: |
           cd zig
-          ./build.zig --prefix "$HOME/zig-out" install
+          python3 ./build --prefix "$HOME/zig-out" install
 
       - name: Package for ARM64 (safe flags)
         run: |
