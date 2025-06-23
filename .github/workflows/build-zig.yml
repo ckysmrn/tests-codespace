@@ -34,7 +34,11 @@ jobs:
 
     - name: Test Zig binary via QEMU (Cortex-A53)
       run: |
-        qemu-aarch64 -cpu cortex-a53 zig-bootstrap/zig-aarch64-linux3x/bin/zig version
+        mkdir -p tests/out
+        qemu-aarch64 -cpu cortex-a53 zig-bootstrap/zig-aarch64-linux3x/bin/zig \
+           build-exe ./tests/main.zig -femit-bin ./tests/out/main
+        chmod +x ./tests/out/main
+        ./tests/out/main
 
     - name: Package Zig binary
       run: |
