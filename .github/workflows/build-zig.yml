@@ -1,4 +1,4 @@
-name: Zig 0.14.1 ARM64 Linux 3.x Static (via zig-bootstrap)
+name: Zig ARM64 Linux 3.x Static (via zig-bootstrap)
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
       run: |
         git clone https://github.com/ziglang/zig-bootstrap
         cd zig-bootstrap
-        git checkout 0.14.1
+        git checkout master
 
     - name: Build Zig for ARM64 Linux 3.x (Cortex-A53)
       run: |
@@ -39,10 +39,10 @@ jobs:
     - name: Package Zig binary
       run: |
         cd zig-bootstrap
-        tar -cJf zig-aarch64-linux3x-0.14.1.tar.xz zig-aarch64-linux3x
+        tar -cJf zig-aarch64-linux3x.tar.xz zig-aarch64-linux3x
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: zig-aarch64-linux3x-0.14.1
+        name: zig-aarch64-linux3x
         path: zig-bootstrap/zig-aarch64-linux3x-0.14.1.tar.xz
