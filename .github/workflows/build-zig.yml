@@ -1,46 +1,48 @@
-name: Build Zig 0.14.1 for ARM64 (Safe Cortex-A53)
+name: Zig 0.14.1 ARM64 Linux 3.x Static (via zig-bootstrap)
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build Zig 0.14.1 AArch64
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y cmake ninja-build clang gcc g++ git python3 xz-utils
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          build-essential git cmake python3 curl \
+          qemu-user-static binfmt-support \
+          musl-tools ninja-build g++ unzip xz-utils
 
-      - name: Clone Zig source
-        run: |
-          git clone https://github.com/ziglang/zig.git
-          cd zig
-          git checkout 0.14.1
+    - name: Clone zig-bootstrap
+      run: |
+        git clone https://github.com/ziglang/zig-bootstrap
+        cd zig-bootstrap
+        git checkout 0.14.1
 
-      - name: Build Zig (x86_64 host)
-        run: |
-          cd zig
-          mkdir build
-          cd build
-          cmake .. \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=$HOME/zig-out \
-            -DZIG_TARGET_MCPU=cortex_a53 \
-            -DZIG_STATIC_LLVM=ON \
-            -DCMAKE_C_FLAGS="-march=armv8-a" \
-            -DCMAKE_CXX_FLAGS="-march=armv8-a"
-           cmake --build . --target install -- -j$(nproc)
-      - name: Package for ARM64 (safe flags)
-        run: |
-          mkdir -p zig-aarch64-safe/bin
-          cp -r $HOME/zig-out/* zig-aarch64-safe/
-          tar -cJf zig-aarch64-safe.tar.xz zig-aarch64-safe
+    - name: Build Zig for ARM64 Linux 3.x (Cortex-A53)
+      run: |
+        cd zig-bootstrap
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: zig-aarch64-cortex-a53
-          path: zig-aarch64-safe.tar.xz
+        ./build --release \
+          --target aarch64-linux-musl \
+          --cpu cortex_a53 \
+          --strip \
+          --out zig-aarch64-linux3x
+
+    - name: Test Zig binary via QEMU (Cortex-A53)
+      run: |
+        qemu-aarch64 -cpu cortex-a53 zig-bootstrap/zig-aarch64-linux3x/bin/zig version
+
+    - name: Package Zig binary
+      run: |
+        cd zig-bootstrap
+        tar -cJf zig-aarch64-linux3x-0.14.1.tar.xz zig-aarch64-linux3x
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: zig-aarch64-linux3x-0.14.1
+        path: zig-bootstrap/zig-aarch64-linux3x-0.14.1.tar.xz
