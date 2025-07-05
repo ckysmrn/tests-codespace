@@ -29,7 +29,7 @@ jobs:
           echo "OUTPUT = /opt/musl-cross" >> config.mak
           make -j$(nproc)
           echo "/opt/musl-cross/bin" >> $GITHUB_PATH
-          tree -a /opt/musl-cross/bin
+          tree -a /opt
 
       - name: Build Zig statically with musl for ARM64
         run: |
