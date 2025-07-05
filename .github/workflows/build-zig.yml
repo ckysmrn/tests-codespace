@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Zig statically with musl for ARM64
         run: |
-          tree -a /opt
+          tree -a /opt/musl-cross
           #export PATH="/opt/musl-cross/bin:$PATH"
           export CC=/opt/musl-cross/aarch64-linux-musl/bin/aarch64-linux-musl-gcc
           export CXX=/opt/musl-cross/aarch64-linux-musl/bin/aarch64-linux-musl-g++
