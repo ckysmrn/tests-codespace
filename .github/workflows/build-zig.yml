@@ -13,7 +13,7 @@ jobs:
           sudo apt install -y \
             git cmake ninja-build python3 \
             build-essential curl musl-tools \
-            g++-aarch64-linux-gnu
+            g++-aarch64-linux-gnu tree
 
       - name: Checkout Zig
         uses: actions/checkout@v4
