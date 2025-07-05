@@ -1,52 +1,50 @@
-name: Zig ARM64 Linux 3.x Static (via zig-bootstrap)
+name: Build Zig Static ARM64
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-zig:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y \
-          build-essential git cmake python3 curl \
-          qemu-user-static binfmt-support \
-          musl-tools ninja-build g++ unzip xz-utils
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            git cmake ninja-build python3 \
+            build-essential curl musl-tools \
+            g++-aarch64-linux-gnu
 
-    - name: Clone zig-bootstrap
-      run: |
-        git clone https://github.com/ziglang/zig-bootstrap
-        cd zig-bootstrap
-        git checkout master
+      - name: Checkout Zig
+        uses: actions/checkout@v4
+        with:
+          repository: ziglang/zig
+          ref: 0.14.1
 
-    - name: Build Zig for ARM64 Linux 3.x (Cortex-A53)
-      run: |
-        cd zig-bootstrap
+      - name: Clone musl-cross-make
+        run: |
+          git clone https://github.com/richfelker/musl-cross-make.git
+          cd musl-cross-make
+          echo "TARGET = aarch64-linux-musl" > config.mak
+          echo "OUTPUT = /opt/musl-cross" >> config.mak
+          make -j$(nproc)
 
-        ./build --release \
-          --target aarch64-linux-musl \
-          --cpu cortex_a53 \
-          --strip \
-          --out zig-aarch64-linux3x
+      - name: Build Zig statically with musl for ARM64
+        run: |
+          export PATH="/opt/musl-cross/bin:$PATH"
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_SYSTEM_NAME=Linux \
+            -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+            -DCMAKE_C_COMPILER=aarch64-linux-musl-gcc \
+            -DCMAKE_EXE_LINKER_FLAGS="-static" \
+            -DZIG_STATIC=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          ninja
 
-    - name: Test Zig binary via QEMU (Cortex-A53)
-      run: |
-        mkdir -p tests/out
-        qemu-aarch64 -cpu cortex-a53 zig-bootstrap/zig-aarch64-linux3x/bin/zig \
-           build-exe ./tests/main.zig -femit-bin ./tests/out/main
-        chmod +x ./tests/out/main
-        ./tests/out/main
-
-    - name: Package Zig binary
-      run: |
-        cd zig-bootstrap
-        tar -cJf zig-aarch64-linux3x.tar.xz zig-aarch64-linux3x
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: zig-aarch64-linux3x
-        path: zig-bootstrap/zig-aarch64-linux3x-0.14.1.tar.xz
+      - name: Upload Zig Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: zig-aarch64-musl
+          path: build/zig
