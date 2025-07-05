@@ -28,6 +28,7 @@ jobs:
           echo "TARGET = aarch64-linux-musl" > config.mak
           echo "OUTPUT = /opt/musl-cross" >> config.mak
           make -j$(nproc)
+          echo "/opt/musl-cross/bin" >> $GITHUB_PATH
 
       - name: Build Zig statically with musl for ARM64
         run: |
