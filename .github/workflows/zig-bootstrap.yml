@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ziglang/zig-bootstrap
+          ref: '0.14.1'
           path: zig-bootstrap
 
       - name: Build Zig for aarch64-linux-musl
@@ -36,7 +37,7 @@ jobs:
           #RANLIB: aarch64-linux-musl-ranlib
           TARGET_TRIPLE: aarch64-linux-musl
         run: |
-          ./build aarch64-linux-musl
+          ./build aarch64-linux-musl baseline
 
       - name: Verify Build Output
         run: |
