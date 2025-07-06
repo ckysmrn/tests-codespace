@@ -24,6 +24,11 @@ jobs:
           curl -L -o aarch64-unknown-linux-musl.tar.xz https://github.com/cross-tools/musl-cross/releases/download/20250520/aarch64-unknown-linux-musl.tar.xz
           tar -xf aarch64-unknown-linux-musl.tar.xz
           echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
+      - name: Check compiler available
+        run: |
+           which aarch64-unknown-linux-musl-g++
+           which aarch64-unknown-linux-musl-gcc
+           aarch64-unknown-linux-musl-g++ --version || true
 
       - name: Build zlib (for aarch64-musl)
         run: |
