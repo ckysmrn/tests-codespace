@@ -19,6 +19,7 @@ jobs:
         run: |
               curl -L -o aarch64-unknown-linux-musl.tar.xz https://github.com/cross-tools/musl-cross/releases/download/20250520/aarch64-unknown-linux-musl.tar.xz
               echo "76f0d71893f3864e91ad09feff71a719cdf94cccd4f14cc25d7deed395968b5b5b790099e49bf89756f612b  aarch64-unknown-linux-musl.tar.xz" > checksum.sha256
+              cat checksum.sha256
               sha256sum -c checksum.sha256
               tar -xf aarch64-unknown-linux-musl.tar.xz
               echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
