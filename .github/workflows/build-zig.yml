@@ -65,11 +65,11 @@ jobs:
             -DCMAKE_CXX_COMPILER=aarch64-unknown-linux-musl-g++ \
             -DCMAKE_EXE_LINKER_FLAGS="-static" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DZIG_STATIC=ON \
-            -DZLIB_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libz.a \
-            -DZLIB_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include \
-            -DZSTD_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libzstd.a \
-            -DZSTD_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include
+            -DZIG_STATIC=ON #\
+            #-DZLIB_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libz.a \
+            #-DZLIB_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include \
+            #-DZSTD_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libzstd.a \
+            #-DZSTD_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include
           ninja
 
       - name: Package zig binary
