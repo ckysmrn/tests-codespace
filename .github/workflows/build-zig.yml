@@ -50,8 +50,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=aarch64-unknown-linux-musl-g++ \
             -DCMAKE_EXE_LINKER_FLAGS="-static" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DZIG_STATIC=ON \
-            -DZIG_USE_CCACHE=OFF
+            -DZIG_STATIC=ON #\
+            #-DZIG_USE_CCACHE=OFF
           ninja
 
       - name: Package zig binary
