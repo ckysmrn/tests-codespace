@@ -19,31 +19,31 @@ jobs:
 
           echo "/usr/lib/llvm-19/bin" >> $GITHUB_PATH
 
-      #- name: Download musl-cross toolchain (aarch64-unknown-linux-musl)
-      #  run: |
-      #    curl -L -o aarch64-unknown-linux-musl.tar.xz https://github.com/cross-tools/musl-cross/releases/download/20250520/aarch64-unknown-linux-musl.tar.xz
-      #    tar -xf aarch64-unknown-linux-musl.tar.xz
-      #    echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
-
-      - name: Download working musl toolchain
+      - name: Download musl-cross toolchain (aarch64-unknown-linux-musl)
         run: |
-           curl -LO https://musl.cc/aarch64-linux-musl-cross.tgz
-           tar -xzf aarch64-linux-musl-cross.tgz
-           echo "$PWD/aarch64-linux-musl-cross/bin" >> $GITHUB_PATH
+          curl -L -o aarch64-unknown-linux-musl.tar.xz https://github.com/cross-tools/musl-cross/releases/download/20250520/aarch64-unknown-linux-musl.tar.xz
+          tar -xf aarch64-unknown-linux-musl.tar.xz
+          echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
+
+      #- name: Download working musl toolchain
+      #  run: |
+      #     curl -LO https://musl.cc/aarch64-linux-musl-cross.tgz
+      #     tar -xzf aarch64-linux-musl-cross.tgz
+      #     echo "$PWD/aarch64-linux-musl-cross/bin" >> $GITHUB_PATH
 
       
       - name: Check compiler available
         run: |
-           which aarch64-linux-musl-g++
-           which aarch64-linux-musl-gcc
-           aarch64-linux-musl-g++ --version || true
+           which aarch64-unknown-linux-musl-g++
+           which aarch64-unknown-linux-musl-gcc
+           aarch64-unknown-linux-musl-g++ --version || true
 
       - name: Build zlib (for aarch64-musl)
         run: |
           curl -LO https://zlib.net/zlib-1.3.1.tar.gz
           tar xf zlib-1.3.1.tar.gz
           cd zlib-1.3.1
-          CC=aarch6-linux-musl-gcc \
+          CC=aarch6-unknown-linux-musl-gcc \
           ./configure --static --prefix=$GITHUB_WORKSPACE/sysroot
           make -j$(nproc)
           make install
@@ -56,7 +56,7 @@ jobs:
           cmake ../build/cmake \
             -DCMAKE_SYSTEM_NAME=Linux \
             -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
-            -DCMAKE_C_COMPILER=aarch64-linux-musl-gcc \
+            -DCMAKE_C_COMPILER=aarch64-unknown-linux-musl-gcc \
             -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/sysroot \
             -DZSTD_BUILD_STATIC=ON \
             -DZSTD_BUILD_SHARED=OFF \
@@ -75,13 +75,13 @@ jobs:
           cmake .. -G Ninja \
             -DCMAKE_SYSTEM_NAME=Linux \
             -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
-            -DCMAKE_C_COMPILER=aarch64-linux-musl-gcc \
-            -DCMAKE_CXX_COMPILER=aarch64-linux-musl-g++ \
+            -DCMAKE_C_COMPILER=aarch64-unknown-linux-musl-gcc \
+            -DCMAKE_CXX_COMPILER=aarch64-unknown-linux-musl-g++ \
             -DCMAKE_EXE_LINKER_FLAGS="-static" \
             -DCMAKE_BUILD_TYPE=Release \
             -DZIG_STATIC=ON \
-            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/sysroot \
-            -DCMAKE_SYSROOT=$GITHUB_WORKSPACE/aarch64-linux-musl-croos
+            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/sysroot #\
+            #-DCMAKE_SYSROOT=$GITHUB_WORKSPACE/aarch64-linux-musl-croos
           ninja -v
 
       - name: Package zig binary
