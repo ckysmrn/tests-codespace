@@ -24,8 +24,7 @@ jobs:
               tar -xf aarch64-unknown-linux-musl.tar.xz
               echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
               #echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_ENV
-              find aarch64-unknown-linux-musl/ -name 'libz*'
-              find aarch64-unknown-linux-musl/ -name 'zlib.h'
+              find aarch64-unknown-linux-musl/ -name '*lib*'
 
               #tree -a .
       
