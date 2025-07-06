@@ -31,8 +31,8 @@ jobs:
         run: |
             sudo apt update
             sudo apt install -y llvm-15 clang-15 lld-15
-            echo "/usr/lib/llvm-15/bin" >> "$GITHUB_PATH"
-            which llvm-config
+            echo "/usr/lib/llvm-15/bin" >> $GITHUB_PATH
+            #which llvm-config
 
       - name: Checkout Zig 0.14.1
         run: |
