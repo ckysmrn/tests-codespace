@@ -30,7 +30,7 @@ jobs:
       - name: Install LLVM
         run: |
             sudo apt update
-            sudo apt install -y llvm-15 clang-15 lld-15
+            sudo apt install -y llvm-19 clang-19 lld-19
             echo "/usr/lib/llvm-15/bin" >> $GITHUB_PATH
             #which llvm-config
 
