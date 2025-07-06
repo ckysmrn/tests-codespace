@@ -6,6 +6,7 @@ on:
 jobs:
   build-zig:
     runs-on: ubuntu-latest
+
     steps:
       - name: Install dependencies
         run: |
@@ -14,7 +15,7 @@ jobs:
             git cmake ninja-build python3 \
             build-essential curl \
             patchelf tree llvm-19 clang-19 lld-19 \
-            libclang-19-dev liblld-19-dev pkg-config
+            libclang-19-dev liblld-19-dev
 
           echo "/usr/lib/llvm-19/bin" >> $GITHUB_PATH
 
@@ -39,8 +40,8 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/facebook/zstd
           mkdir -p zstd/build_output
-          cd zstd/build/cmake
-          cmake .. \
+          cd zstd/build_output
+          cmake ../build/cmake \
             -DCMAKE_SYSTEM_NAME=Linux \
             -DCMAKE_C_COMPILER=aarch64-unknown-linux-musl-gcc \
             -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/sysroot \
@@ -56,8 +57,6 @@ jobs:
 
       - name: Build Zig for aarch64-musl
         working-directory: ./zig/build
-        env:
-          PKG_CONFIG_PATH: ${{ github.workspace }}/sysroot/lib/pkgconfig
         run: |
           cmake .. \
             -DCMAKE_SYSTEM_NAME=Linux \
@@ -67,8 +66,10 @@ jobs:
             -DCMAKE_EXE_LINKER_FLAGS="-static" \
             -DCMAKE_BUILD_TYPE=Release \
             -DZIG_STATIC=ON \
-            -DZIG_STATIC_ZLIB=ON \
-            -DZIG_STATIC_ZSTD=ON
+            -DZLIB_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libz.a \
+            -DZLIB_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include \
+            -DZSTD_LIBRARY=$GITHUB_WORKSPACE/sysroot/lib/libzstd.a \
+            -DZSTD_INCLUDE_DIR=$GITHUB_WORKSPACE/sysroot/include
           ninja
 
       - name: Package zig binary
