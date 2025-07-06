@@ -13,7 +13,7 @@ jobs:
           sudo apt install -y \
             git cmake ninja-build python3 \
             build-essential curl \
-            patchelf tree
+            patchelf tree libz-dev libzstd-dev
 
       - name: Download musl-cross toolchain (aarch64-linux-musl)
         run: |
