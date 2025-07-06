@@ -23,9 +23,9 @@ jobs:
               #sha256sum -c checksum.sha256
               tar -xf aarch64-unknown-linux-musl.tar.xz
               echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_PATH
-              echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_ENV
+              #echo "$PWD/aarch64-unknown-linux-musl/bin" >> $GITHUB_ENV
      
-              tree -a .
+              #tree -a .
 
       - name: Checkout Zig 0.14.1
         run: |
